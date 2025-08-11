@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Create Bank Transaction CSV">
+        <div class="custom-file-upload">
+            <lightning-button label="Upload File" icon-name="utility:upload" onclick={triggerFileInput}></lightning-button>
+            <input type="file" accept=".csv" class="hidden-file-input" onchange={handleFileChange} ref="fileInput"/>
+        </div>
+
+        <template if:true={error}>
+            <div class="slds-text-color_error slds-m-top_small">
+                <lightning-icon icon-name="utility:error" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                <span>{error}</span>
+            </div>
+        </template>
+
+        <template if:true={success}>
+            <div class="slds-text-color_success slds-m-top_small">
+                <lightning-icon icon-name="utility:success" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                <span>{success}</span>
+            </div>
+        </template>
+
+        <template if:true={downloadReady}>
+            <div class="slds-m-top_medium">
+                <lightning-button class="slds-m-left_small" label="Email File to Me" icon-name="utility:email" onclick={sendEmailWithCSV}></lightning-button>
+            </div>
+        </template>
+    </lightning-card>
+</template>

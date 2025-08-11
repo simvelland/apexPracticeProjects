@@ -1,0 +1,22 @@
+<template>
+    <lightning-card title="Loan Report CSV Generator">
+        <div>
+            <lightning-button label="Generate CSV" onclick={handleGenerate} variant="brand" disabled={isLoading}></lightning-button>
+
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading..."></lightning-spinner>
+            </template>
+
+            <template if:true={message}>
+                <div>{message}</div>
+                <template if:true={csvSummary}>
+                    <div>{csvSummary}</div>
+                </template>
+            </template>
+
+            <template if:true={error}>
+                <div>{error}</div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
