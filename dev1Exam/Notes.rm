@@ -15,4 +15,29 @@
 - all SObjects fall under Object type (shared methods)
 - List<String> and String[] are the same
 - you can create a map of ID -> SObject by simply passing in a list of SObjects
-- 
+- you can do a mass update on map using update map.values()
+- you can iterate over map values, not only keys
+- Custom metadata types:
+    - Similar to custom objects
+    - All records maintained from the setup menu
+    - __mdt at the end of API names
+    - governer limits don't apply to queries on Custom Metadata records
+    - Ideal for saving stagnant values that need to be modified; since apex code cannot be modified in a production environment, it is recommended that you use custom metadata types in place of any hardcoded values in the event that they need to be modified. 
+    - Custom Setting records can't be migrated to other environments with developer tools or change sets. They have to be imported or exported like data
+    - Custom Metadata type records have to be migrated with change sets of developer tools
+- Platform events 
+    - Designed and held in setup
+    - __e api name 
+    - inserting platform event records fires the event 
+    - any automations listening to the event will run upon platform event insertions 
+    - custom fields can be added to platform events 
+    - The following customizations can listen to and fire platform events: 
+        - triggers
+        - flows
+        - process builder
+        - lwc
+        - APIs
+    - Invocable methods
+        - use the InvocableMethod annotation to identify methods that can be run as invocable actions
+        - invocable methods are called with REST API and used to invoke a single Apex method. 
+        - Invocable methods have dynamisc input and output values and support describe calls
