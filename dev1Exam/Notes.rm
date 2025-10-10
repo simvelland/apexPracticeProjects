@@ -44,5 +44,9 @@
         - use the InvocableMethod annotation to identify methods that can be run as invocable actions
         - invocable methods are called with REST API and used to invoke a single Apex method. 
         - Invocable methods have dynamisc input and output values and support describe calls
-
-- Aura Components
+        - can be run by process builder or flows
+        - with annotation, include (label=  description=  category= )
+        - need to take in and return lists
+    - Invocable variables
+        - use the InvocableVariable annotation to identify variables used by invocable methods in custom classes
+        - identifies a class variable used as an input or output parameter for an InvocableMethod method's invocable action. 
