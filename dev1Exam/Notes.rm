@@ -41,3 +41,5 @@
         - use the InvocableMethod annotation to identify methods that can be run as invocable actions
         - invocable methods are called with REST API and used to invoke a single Apex method. 
         - Invocable methods have dynamisc input and output values and support describe calls
+
+- Aura Components
