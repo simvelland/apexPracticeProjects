@@ -51,4 +51,16 @@ for (Database.SaveResult sr : results) {
     }
 }
 
+/* Note: Events are published asynchronously when system resources become available. After being published, they are stored in the event bus for a specific retention period. To get final confirmation of the final event publishing result, use Apex Publish Callbacks.  */
+
+/* The Salesforce Platform provides allocations for how many events you can define in your org, and how many events you can publish in an hour. For events configured with the Publish After Commit behavior, each method execution is counted as one DML statement against the Apex DML statement limit.
+
+You can check limit usage using the Apex Limits.getDMLStatements()
+method. For events configured with the Publish Immediately behavior, each method execution is counted against a separate event publishing limit of 150 EventBus.publish() calls. You can check limit usage using the Apex Limits.getPublishImmediateDML() method. For more information see the Resources section.  */
+
+To publish without apex code, use record creation functionality in Flow Builder. 
+
+To publish event messages using Salesforce APIs, use Pub/Sub API or SOAP/REST/Bulk API.
+
+/* When using data APIs, you publish events in the same way that you insert sObjects. Like with Apex, the event message is published asynchronously. When you publish an event and get a success status of true, the publish request is queued in Salesforce. */
 
