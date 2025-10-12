@@ -64,3 +64,22 @@ To publish event messages using Salesforce APIs, use Pub/Sub API or SOAP/REST/Bu
 
 /* When using data APIs, you publish events in the same way that you insert sObjects. Like with Apex, the event message is published asynchronously. When you publish an event and get a success status of true, the publish request is queued in Salesforce. */
 
+On the SF platform, you subscribe to events using Apex triggers, processes, flows, and empApi Lightning component. 
+In an external app, you subscribe to events using Pub/Sub API. 
+
+Platform events support only after insert triggers. The after insert trigger event corresponds to the time after a platform event is published. After an event message is published, the after insert trigger is fired.
+
+Unlike triggers on standard or custom objects, triggers on platform events don’t execute in the same Apex transaction as the one that published the event. The trigger runs in its own process under the Automated Process entity, 
+which is a system user. As a result, debug logs corresponding to the trigger execution are created by the Automated Process entity and aren’t available in the Developer Console. To collect platform event trigger logs, add a trace 
+flag entry for the Automated Process entity in Setup
+
+You can override the running user of a platform event trigger so that the trigger runs under that user instead of Automated Process. Configure the trigger by using PlatformEventSubscriberConfig in Metadata API or Tooling API
+
+Lightning apps can use the empApi Lightning Web or Aura component to subscribe to events in the app
+To use the empApi methods in your lightning web component, import the methods from the lightning/empApi module as such: import { subscribe, unsubscribe, onError, setDebugFlag, isEmpEnabled } from 'lightning/empApi';  Then, call the imported methods in your js code. 
+To use the empApi methods in Aura components: <lightning:empApi aura:id="empApi"/>   Then, in the clieint-side controller, add functions to call the component methods. 
+
+To subscribe to Platform Event Notifications declaritively, create a platform event-triggered flow. Alternatively, you can subscribe to a platform event in flows using a Pause element- that message causes a paused flow interview to resume.
+
+Pub/Sub API provides a single interface for publiishing and subscribing to platform events. It efficiently publishes and delivers binary event messages in the Apache Avro format. 
+Pub/Sub API uses a pull subscription model in which the client requests a number of events from the server based on its processing capacity. 
