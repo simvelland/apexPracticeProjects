@@ -83,3 +83,23 @@ To subscribe to Platform Event Notifications declaritively, create a platform ev
 
 Pub/Sub API provides a single interface for publiishing and subscribing to platform events. It efficiently publishes and delivers binary event messages in the Apache Avro format. 
 Pub/Sub API uses a pull subscription model in which the client requests a number of events from the server based on its processing capacity. 
+
+// Challenge 3
+
+trigger OrderEventTrigger on Order_Event__e (after insert) {
+    
+    List<Task> tasksToInsert = new List<Task>();
+    
+    for (Order_Event__e event : Trigger.new) {
+        if (event.Has_Shipped__c == true) {
+            Task t = new Task(
+                Priority = 'Medium',
+                Subject = 'Follow up on shipped order 105',
+                OwnerId = event.CreatedById
+            );
+            tasksToInsert.add(t);
+        }
+    }
+    
+    insert tasksToInsert;
+}
