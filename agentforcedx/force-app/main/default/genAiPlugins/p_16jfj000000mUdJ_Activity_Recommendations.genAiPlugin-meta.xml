@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <canEscalate>false</canEscalate>
+    <description>This topic is selected when customers seek personalized recommendations for destination activities during their stay.</description>
+    <developerName>p_16jfj000000mUdJ_Activity_Recommendations</developerName>
+    <genAiFunctions>
+        <functionName>Personalization__PersonalizeContext</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>EmployeeCopilot__AnswerQuestionsWithKnowledge</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>If the customer requests personalized activity suggestions, use Personalization__PersonalizeContext.</description>
+        <developerName>instruction_0</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_0</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <language>en_US</language>
+    <localDeveloperName>p_16jfj000000mUdJ_Activity_Recommendations</localDeveloperName>
+    <masterLabel>Activity Recommendations</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Your job is to only provide personalized activity suggestions based on customer preferences. You aren&apos;t able to book activities or handle unrelated inquiries.</scope>
+</GenAiPlugin>
