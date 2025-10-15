@@ -121,4 +121,38 @@ Challenge 6
 - Resources can be archives (.zip, .jar files), images, stylesheets, JS, and other files
 - Static resources are managed and distributed by Lightning Platform, which acts as a content distribution network for the files. Caching and distribution are handled atuomatically. 
 - Static resources are referenced using the $Resource global variable
+*/
 
+Challenge 7
+
+<apex:page title="Image from Static Resource">
+    <apex:image url="{!URLFOR($Resource.vfimagetest, 'cats/kitten1.jpg')}" />
+</apex:page>
+
+
+/* Creating and Using Custom Controllers
+- <apex:facet> lets you set the contents of the column header to whatever you want
+*/
+
+Challenge 8
+
+<apex:page controller="NewCaseListController">
+    <apex:pageBlock title="Cases">
+        <apex:repeat value="{! newCases }" var="case">
+            <apex:outputLink value="/{! case.Id }">{! case.CaseNumber }</apex:outputLink>
+        </apex:repeat>
+    </apex:pageBlock>
+</apex:page>
+
+public class NewCaseListController {
+    
+    public List<Case> getNewCases() {
+        List<Case> result = [
+            SELECT Id, CaseNumber
+            FROM Case
+            WHERE Status = 'New'
+        ]; 
+        
+        return result;
+    }
+}
