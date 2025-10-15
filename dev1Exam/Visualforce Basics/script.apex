@@ -95,3 +95,30 @@ Challenge 5
         </apex:pageBlock>
     </apex:form>
 </apex:page>
+
+
+/* Standard List Controllers
+- Allows you to create VF pages that can display or act on a set of records
+- Use the standard list controller and an iteration component, such as <apex:pageBlockTable> to display a list of records
+- The standard list controller provides a number of features you can use to alter the display of the list. One of the most powerful is list view filters. 
+- Use the pagination features of the standard list controller to allow users to look at long lists of records one "page" at a time
+*/
+
+Challenge 6 
+
+<apex:page standardController="Account" recordSetVar="accounts">
+    <apex:pageBlock title="Accounts">
+        <apex:pageBlockSection>
+            <apex:repeat var="a" value="{! accounts }">
+                <li><apex:outputLink value="/{! a.Id }">{! a.Name }</apex:outputLink></li>
+            </apex:repeat>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>
+
+/* Using Static Resources
+- Static resources allow you to upload content that you can referene in a VF page. 
+- Resources can be archives (.zip, .jar files), images, stylesheets, JS, and other files
+- Static resources are managed and distributed by Lightning Platform, which acts as a content distribution network for the files. Caching and distribution are handled atuomatically. 
+- Static resources are referenced using the $Resource global variable
+
