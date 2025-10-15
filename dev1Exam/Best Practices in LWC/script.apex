@@ -1,0 +1,25 @@
+/* Best practices that can optimize the performance of lightning components
+
+- Optimizing Data Retrieval:
+    - Use Lightning Data Service or cached data whenever possible
+    - Before making a call to the server, make sure there's no other option to obtain the data
+        - When appropriate, consider passing data between components using attributes, events, or methods rather than retrieving the same data in different components.
+        - If multiple components on a given page retrieve the same data, consider creating a service component that has no UI elements and can query data once so that it can pass data on to other components.
+    - When making a call to the server, limit the fields and rows of the result set
+        - only SELECT the fields you need
+        - Set a LIMIT on the query, don't return huge numbers of rows at once
+        - Implement pagination when wueries may have large results sets
+    - Don't make a call to the server to filter or sort data you already have at the client-side unless you are working with paginated data. JavaScript arrays have built in functions to do things like sort, filter, and find values.
+    - Instead of using Apex, leverage the Lightning Data Service and UI API to retrieve records—and also retrieve list views, metadata, and picklist values.
+    - When using the getRecord wire adapter (part of the UI API), request only the fields that the component requires. Be explicit. For example, if the component requires one field, request only that field.
+    - @wire(getRecord, { recordId: '$recordId', fields: ['Contact.Name'] });
+    - Don't request a record by layout unless you absolutely need all that data. Layouts are a collection of fields managed by the administrator and can change at any time. Layouts are very expensive because they often contain hundreds of fields.
+- Improve Data Caching
+    - Client-side data caching improves performance by sharing data among components, which significantly reduces the number of server round-trips. 
+    - LWC has two built-in mechanisms for client-side caching: LDS and cacheable Apex methods. If neither of these work for your purposes, you can also implement a custom caching solution. 
+    - LDS handles security, fetches records from the server, stores them in a highly efficient client cache, shares them between all components that request them, and sends changes to the server. 
+    - A Cacheable Apex method is a server action whose response is stored in the client cache so that subsequent requests for the same server method with the same set of arguments can be accessed from that cache instead of the server.
+    - In API version 55.0 and later, you can use the annotation @AuraEnabled(scope='global') along with @AuraEnabled(cacheable=true) to enable Apex methods to be cached in a global cache.
+- Optimize PErformance with Progressive Disclosure
+    - Lazy Instantiation: an object or component isn't created until first being used (standard tab components, lightning component actions or quick actions, a utility bar)
+    - Conditional Rendering: an object or component will only appear once a state or behavior is matched (dynamic component visibility, lwc:if/elseif/else, CSS)
