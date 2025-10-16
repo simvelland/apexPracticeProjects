@@ -1,0 +1,51 @@
+/* LWC for Aura Developer
+- Migrate attirbutes from <aura:attribute> tags in the .cmp markup file to js properties in the .js file
+- Migrate <aura:if> tags in an Aura component to lwc:if, lwc:elseif, or lwc:else directives in a Lightning web component’s HTML file.
+- Migrate <aura:iteration> tags in an Aura component to for:each directives in a Lightning web component’s HTML file.
+- Replace an init event handler in an Aura component with the standard JavaScript connectedCallback() method in a Lightning web component. The connectedCallback() lifecycle hook fires when a component is inserted into the DOM. Lifecycle hooks are callback methods that let you run code at each stage of a component’s lifecycle.
+- Base Lightning components are building blocks that Salesforce provides in the lightning namespace, and they’re available in both Aura components and Lightning web components. Base Lightning components have a different syntax when you use them in the two programming models.
+- Migrate JavaScript code from the separate client-side controller, helper, and renderer files in an Aura component to one JavaScript file in a Lightning web component.
+- To share JavaScript code between Lightning web components and Aura components, put the code in an ES6 module. Both programming models can access the shared code. Even if you don’t move all your code to Lightning web components, you can still access new functionality that you write in an ES6 module in an Aura component.
+- The component’s render() method can switch templates based on the component needs. This pattern is more similar to the route splitting used in other JavaScript frameworks.
+- To create forms that let users view, edit, and create SF records, Aura components and LWC can both use base components in the lightning namespace. These components provide a form layout and handle record CRUD changes without requiring Apex code. They use LDS to cache and share record updates across components. 
+- Lightning Data Service is built on top of the public User Interface API, but it only supports a subset of the API. That subset covers many of the typical use cases for working with data. 
+- For most use cases, lightning-record-form provides a great starting point. It combines and simplifies the functionality of lightning-record-view-form and lightning-record-edit-form.
+- Aura components that need more control over the UI than lightning:recordForm and friends provide can use the <force:recordData> tag with their own custom UI in markup.
+- To read Salesforce data, Lightning web components use a reactive wire service, which is built on Lightning Data Service. Components use @wire in their JavaScript class to read data from one of the wire adapters in the lightning/ui*Api namespace.
+- We call the wire service reactive in part because it supports reactive variables, which are prefixed with $. If a reactive variable changes, the wire service provisions new data. 
+- When you use the ui*Api wire adapters, we strongly recommend importing references to objects and fields. Importing references to objects and fields ensures that your code works because Salesforce verifies that the objects and fields exist.
+- you can use js API to create, update or delete a record through LDS also (no Apex is required)
+- Don’t use @wire to create, update, or delete a record. The wire service delegates control flow to the Lightning Web Components engine. Delegating control is great for read operations, but it isn’t great for create, update, and delete operations. As a developer, you want complete control over operations that change data. That’s why you perform create, update, and delete operations with a JavaScript API instead of with the wire service.
+- To expose an Apex method to a Lightning web component, the method must be static and either global or public. Annotate the method with @AuraEnabled.
+- If an Apex method is cacheable (it doesn’t mutate data), you can invoke it from a component via the wire service. You must annotate the method with @AuraEnabled(cacheable=true).
+- the syntax to call the method directly without @wire doesn’t have an @wire annotation. Instead, getContactList() returns a Promise object that resolves on success with the list of contacts.
+- By default, you can’t make calls to third-party APIs from JavaScript code in Lightning web components. Add a remote site as a CSP Trusted Site to allow JavaScript component code to load assets from and make API requests to that site’s domain.
+- You can add components within the body of another component. This component composition enables you to build complex components from simpler building-block components.
+- In a large application, it’s useful to compose the app with a set of smaller components to make the code more reusable and maintainable.
+- If you haven’t set a namespace prefix for your organization, use the default namespace c when referencing components that you’ve created.
+- The owner is the component that owns the template. In this example, the owner is the c-owner component. The owner controls all the composed components that it contains. The owner can:
+    - Set public properties on composed components.
+    - Call public methods on composed components.
+    - Listen for any events fired by the composed components.
+- The markup looks similar for the two programming models, except for the syntax for referencing a composed component. We saw earlier how the Aura model and the Lightning Web Components model each have a different syntax for references to components in markup.
+    - In the Aura component, we use c:PropertyTile.
+    - In the Lightning web component, we use c-property-tile. A dash separates the namespace, c, from the component name. The camel-case propertyTile Lightning web component is referenced as property-tile in the HTML file of another Lightning web component that contains it.
+- In Aura, a facet is any attribute of type Aura.Component[]. That’s just a fancy way of saying you can set an array of components for the attribute. In even less fancy terms, think of a facet as a sandwich. You can stuff as many ingredients (components) as you’d like into your sandwich (facet).
+- The concept of facets is important because it allows you to design a component with an attribute that’s a placeholder for markup that a parent component can set.
+- Lightning web components use slots instead of facets. A slot is a placeholder for markup that a parent component passes into a component’s body. The HTML <slot> element is part of the Web Components standard.
+- Aura components can use two forms of expression syntax for data binding: {!expr} or {#expr}. 
+- In Aura components, this data binding is two way. Changes to the fName attribute are passed into the child component’s firstName attribute, and changes in the value of the firstName attribute in the child component are passed back to the fName attribute of the owner component.
+- In Lightning web components, the data binding for property values is one way. If the property value changes in the owner component, the updated value propagates to the child component. The reverse is not true.
+- To trigger a mutation for the property value provided by the owner component, the child component can send an event to the parent. If the parent owns the data, the parent can change the property value, which propagates down to the child component via the one-way data binding.
+- Instead of the proprietary Event object in Aura components, use the Event or CustomEvent standard DOM interfaces. We strongly recommend you use the CustomEvent interface, because this provides a more consistent experience.
+- The framework may need to patch properties and methods of events to normalize implementations between browsers, and using CustomEvent guarantees that your component is covered.
+- Instead of event.fire() in an Aura component, use the standard DOM method, this.dispatchEvent(myEvent), in Lightning web components.
+- The first argument in the CustomEvent() constructor sets the name of the event
+- The second argument is an object that configures the event behavior. In this object, we set the detail, which is the data payload for the event. A handling component can read the data. 
+- An Aura component uses the <aura:handler> tag in markup to define a handler. Alternatively, a component can declare a handler action when it references another component in its markup.
+- A Lightning web component can similarly have a declarative handler. The event name in the declarative handler is prefixed by on.
+- In a Lightning web component, you can also programmatically set up a handler using the standard addEventListener() method in the component’s JavaScript file.
+- Migrate application events in Aura components to a pub-sub (publish-subscribe) pattern in Lightning web components. In a pub-sub pattern, one component publishes an event and other components subscribe to receive and handle the event. Every component that subscribes to the event receives the event.
+- Standard DOM events should always be your first choice for events because they only travel up the containment hierarchy, making behavior more predictable. Application events can be problematic in complex apps because any component can handle the event.
+- sometimes you need sibling components in a containment hierarchy to communicate. Unrelated components used in Lightning pages or the Lightning App Builder are examples of sibling components that need to communicate. In those scenarios, the pub-sub pattern is the way to go.
+*/ 
