@@ -1,0 +1,13 @@
+- event.target.value is for when you're dealing with a standard HTML input element or a Lightning Base Component that directly wraps one (<lightning-input> or <input type="text">). 
+    - target is the actual DOM element that triggered the event 
+    - value is the element's built in value property
+    - works because the event bubbles up from the DOM input itself
+    - typical use cases: lightning-input, lightning-combobox, lightning-slider (any components that have a value property tied directly to user input)
+- event.detail is for when you're handling custom events, either ones you create yourself using new CustomEvent(), or ones dispatched by higher-level base components (like lightning-record-picker or lightning-datatable)
+    - detail is an object defined by whoever dispatched the custom event
+    - it can contain any data 
+    - so, when you see event.detail you're not looking at a DOM input event; you're handling a custom event payload
+- event.detail.value combines the two ideas above; used when a component dispatches a custom event (not a native input event), and that event's detail object contains a value property
+- const msg = (e && e.body && (e.body.message || e.body.pageErrors?.[0]?.message))
+    - assigns the most specific available error message and falls back to a default string if nothing usable exists
+- 

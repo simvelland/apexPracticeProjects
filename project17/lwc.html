@@ -1,0 +1,18 @@
+<template>
+    <lightning-quick-action-panel header="Reassign Approval">
+        <div class="slds-p-around_medium">
+            <lightning-record-picker label="Select approver" object="User" onchange={handleUserSelection} required></lightning-record-picker>
+        </div>
+
+        <template if:true={isSubmitting}>
+            <lightning-spinner alternative-text="Reassigning" size="small"></lightning-spinner>
+        </template>
+
+        <div slot="footer" class="slds-text-align_right">
+            <lightning-button label="Cancel" onclick={close}></lightning-button>
+            <lightning-button label="Reassign Approval" variant="brand" onclick={handleReassign} disabled={isSubmitting}></lightning-button>
+        </div>
+    </lightning-quick-action-panel>
+
+
+</template>
