@@ -1,0 +1,115 @@
+<template>
+    <template if:true={loading}>
+        <div class="slds-p-vertical_medium slds-align_absolute-center">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template if:true={error}>
+        <div class="slds-box slds-theme_error slds-m-vertical_small" role="alert">
+            <strong class="slds-text-heading_small">Error</strong>
+            <div class="slds-m-top_xx-small">{error}</div>
+        </div>
+    </template>
+
+    <template if:true={isEmpty}>
+        <div class="slds-illustration slds-illustration_small">
+            <img src="/assets/icons/illustrations/salesforce.svg" alt="" />
+            <div class="slds-text-longform">
+                <h3 class="slds-text-heading_medium">No work items</h3>
+                <p>Try creating a new one or changing your filters</p>
+            </div>
+        </div>
+    </template>
+
+    <template if:true={hasRows}>
+        <div class="slds-table_header-fixed_container slds-scrollable_y" style="max-height: 420px;">
+            <table class="slds-table slds-table_bordered slds-table_fixed-layout">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th scope="col" aria-sort={ariaName}>
+                            <button class="slds-button slds-button_reset" data-field="Name" onclick={sortClick}>
+                                <div class="slds-truncate" title="Name">Name</div>
+                            </button>
+                        </th>
+
+                        <th scope="col" aria-sort={ariaStatus}>
+                            <button class="slds-button slds-button_reset" data-field="Status__c" onclick={sortClick}>
+                                <div class="slds-truncate" title="Status">Status</div>
+                            </button>
+                        </th>
+
+                        <th scope="col" aria-sort={ariaPriority}>
+                            <button class="slds-button slds-button_reset" data-field="Priority__c" onclick={sortClick}>
+                                <div class="slds-truncate" title="Priority">Priority</div>
+                            </button>
+                        </th>
+
+                        <th scope="col" aria-sort={ariaDue}>
+                            <button class="slds-button slds-button_reset" data-field="Due_Date__c" onclick={sortClick}>
+                                <div class="slds-truncate" title="Due Date">Due Date</div>
+                            </button>
+                        </th>
+
+                        <th scope="col" aria-sort={ariaOwner}>
+                            <button class="slds-button slds-button_reset" data-field="OwnerName" onclick={sortClick}>
+                                <div class="slds-truncate" title="Owner">Owner</div>
+                            </button>
+                        </th>
+
+                        <th scope="col" style="width: 120px;">
+                            <div class="slds-truncate" title="Actions">Actions</div>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <template for:each={items} for:item="row">
+                        <tr key={row.Id}>
+                            <th scope="row">
+                                <div class="slds-truncate" title={row.Name}>{row.Name}</div>
+                            </th>
+                            <td>
+                                <lightning-badge label={row.Status__c}></lightning-badge>
+                            </td>
+                            <td>
+                                <span class="slds-badge">{row.Priority__c}</span>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title={row.Due_Date__c}>{row.Due_Date__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title={row.OwnerName}>{row.OwnerName}</div>
+                            </td>
+                            <td>
+                                <div class="slds-button-group" role="group">
+                                    <lightning-button-icon
+                                        icon-name="utility:edit"
+                                        alternative-text="Edit"
+                                        title="Edit"
+                                        onclick={edit}
+                                        data-id={row.Id}>
+                                    </lightning-button-icon>
+                                    <lightning-button-icon
+                                        icon-name="utility:check"
+                                        alternative-text="Advance Status"
+                                        title="Advance Status"
+                                        onclick={toggle}
+                                        data-id={row.Id}>
+                                    </lightning-button-icon>
+                                    <lightning-button-icon
+                                        icon-name="utility:delete"
+                                        alternative-text="Delete"
+                                        title="Delete"
+                                        onclick={del}
+                                        data-id={row.Id}>
+                                    </lightning-button-icon>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </template>
+</template>

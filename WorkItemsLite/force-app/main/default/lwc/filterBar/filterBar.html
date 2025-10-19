@@ -1,0 +1,53 @@
+<template>
+    <div class="slds-card slds-m-bottom_small">
+        <div class="slds-card__body slds-p-around_medium">
+            <div class="slds-grid slds-wrap slds-gutters">
+                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-input
+                        type="search"
+                        label="Search"
+                        value={draft.searchText}
+                        onchange={onSearchChange}>
+                    </lightning-input>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-dual-listbox
+                        name="statuses"
+                        label="Statuses"
+                        source-label="Available"
+                        selected-label="Selected"
+                        options={statusOptions}
+                        value={draft.statuses}
+                        onchange={onStatusesChanges}></lightning-dual-listbox>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-dual-listbox
+                        name="priorities"
+                        label="Priorities"
+                        source-label="Available"
+                        selected-label="Selected"
+                        options={priorityOptions}
+                        value={draft.priorities}
+                        onchange={onPrioritiesChange}></lightning-dual-listbox>
+                </div>
+            </div>
+
+            <div class="slds-m-top_small slds-grid slds-grid_align-spread">
+                <div>
+                    <lightning-button label="Clear" onclick={clear}></lightning-button>
+                </div>
+                <div>
+                    <lightning-button
+                        variant="brand"
+                        label="Apply"
+                        onclick={apply}
+                        disabled={applyDisabled}></lightning-button>
+                    <lightning-button class="slds-m-left_x-small" label="New" onclick={create}></lightning-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
