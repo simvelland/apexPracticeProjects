@@ -1,0 +1,21 @@
+/* 
+- Company settings are the collection of information about an organization
+- This collection is mostly captured when you purchase a Salesforce product, but you can update the settings if your company moves operations or expands globally. 
+- Locale settings determine the display formats for date and time, user names, addresses, and commas and periods in numbers. 
+- Admin sets the default locale, but users can set a personal locale if they're based in a different location. 
+- In SF, you can specify which currency your organization uses, and users can apply specific currencies to their settings based on where they do business. 
+- By default, Salesforce organizations use a single curreny. Once you set the required currency locale in your company settings, all currency values on records display in that currency. 
+- As an admin, you can set the corporate currency, which reflects the currency of corporate headquarters. You can also maintain the list of active currencies and their conversion rates relative to the corporate currency. 
+- Once a multicurrency setup is enabled, it can't be disabled. 
+- once multiple currencies is enabled you can also:
+    - activate additional currencies and optionally select a new corporate currency
+    - ensure users have correct personal currencies
+    - make sure users use the correct currency when creating records
+- deactivating a currency does not alter amounts in items that use that currency, but your users are no longer able to enter new amounts using the  inactive currency.
+- deactivating a currency that's set as a user's personal currency automatically resets the user's currency to the corporate currency
+- edit converstion rates to manage the static exchange rates between your active and inactive currencies and the corporate currency
+- Previous conversion rates are not sored and all conversions within opportunities, forecasts, and other amounts use the current conversion rate
+- Advanced currency management for currency fields on opportunities and opportunity products lets you manage echange rate start dates. 
+- When advanced currency management is first enabled, your existing exchange rates automatically become the first set of dated exchange rates. These rates are valid for all time, until you define another set of exchange rates. 
+- When advanced currency management is enabled, Visualforce <apex:inputField> and <apex:outputField> components cannot display currency fields.
+*/ 

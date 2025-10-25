@@ -1,0 +1,13 @@
+/* Compound Fields
+- group together multiple elements of primitive data types, such as numbers or strings, to represent complex data types, such as location or an address
+- an abstraction that can simplify application code that handles the values, leading to more concise, understandable code. 
+- Compound fields are accessible as a single, structured field, or as individual component fields
+- The values contained within the compound field and the values in individual fields both map to the same underlying data stored in SF; they always have identical values. 
+- Compund fields are read-only. Changes are performed by writing to the individual component fields
+- Address Compound Fields: 
+    - Standard addresses- addresses built into standard objects in Salesforce- are accessible in the SOAP API and REST API as an address, a structured compound data type, as well as individual address elements. 
+    - If you anabled Custom Address Fields, you can also add custom fields that mimic the standard address field behavior. 
+- Geolocation Compound Field
+    - Geolocation fields are accessible in the SOAP and REST APIs as a Location- a structured compound data type- or as individual latitude and logitude elements. 
+- Compound Field Considerations and Limitations
+    - Address and geolocation compound fields are convenient and result in more concise, clear code. 
