@@ -1,0 +1,35 @@
+/* 
+- Big objects allow you to store and manage a massive amount of data on the Salesforce platform
+- Standard big objects are defined by Salesforce and are included in Salesforce products.
+- Custom big objects are defined and deployed in Setup. You can create a custom big object in Setup, where you set its definition, fields, and index.
+- The fields defined in a big object’s index determine the big object’s identity and its ability to be queried
+- Big objects were created to tackle a few specific scenarios: 
+    - 360 view of the customer
+    - Auditing and Tracking
+    - Historical Archive
+- You can query big objects using standard SOQL with the Bulk API and batch Apex.
+- Bulk API can query results larger than 100k records, which is optimal for reporting.
+- If you need to manipulate data, batch Apex is a better option
+- Salesforce recommends that you structure your Batch Apex job so that it self-paginates if you want to operate on result sets larger than 50k. 
+- Big objects support only object and field permissions.
+- Once you’ve deployed a big object, you can’t edit or delete the index. To change the index, start over with a new big object.
+- SOQL relationship queries are based on a lookup field from a big object to a standard or custom object in the select field list (not in filters or subqueries).
+- Big objects support custom Salesforce Lightning and Visualforce components rather than standard UI elements (home pages, detail pages, list views, and so on).
+- You can create up to 100 big objects per org. The limits for big object fields are similar to the limits on custom objects, and depend on your org’s license type.
+- Big objects don’t support transactions that include big objects, standard objects, and custom objects.
+- To support the scale of data in a big object, you can’t use triggers, flows, processes, and the Salesforce app.
+- While custom big objects are similar to standard and custom objects, some parameters are unique to big objects, and some parameters don’t apply.
+- Object names must be unique across all standard, custom, external, and big objects in your org.
+- Once saved, a big object’s API name is identified with the suffix “__b” versus the custom object suffix “__c.”
+- When you create a big object, the status is set to In Development. You can't deploy a big object until it includes an index that contains at least one custom field. Only required custom fields are allowed in an index. After you create an index, you see a second status of Deployed. Once you’re ready to grant users access, change the status to Deployed.
+- The fields defined in a big object’s index determine the big object’s identity and ability to be queried.
+-  The fields defined in your index should be the fields that will be most relevant to your queries, so you have to have foresight and do some planning here
+- The order in which you define the fields is also a big consideration. If you’re using SOQL to query your big object, you can query only on the fields that make up your index, in the order you defined them in
+- Keep these considerations in mind when you define the index.
+    - An index must include at least one custom field and can have up to five custom fields total.
+    - Custom fields included in the index must be marked as required.
+    - Long Text Area fields can’t be included in the index.
+    - The total number of characters across all text fields in an index can’t exceed 100.
+    - Once you’ve created an index, you can’t edit or delete it. To change the index, create another big object with a new index.
+*/
+
