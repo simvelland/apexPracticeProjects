@@ -1,0 +1,116 @@
+/* Design your Data Model
+
+- A key for managing large data volumes for peak performance is carefully architecting record ownership to avoid data skew.
+- Data skew happens when more than 10,000 child records are associated with the same parent record within an org. 
+- Plan your data model with enough accounts to keep the number of child records per parent below this threshold, and distribute new child records across these accounts as they’re created.
+- There are three types of data skew that can occur and negatively affect performance: 
+    - Account Data Skew
+        - Certain Salesforce objects, like accounts and opportunities, have special data relationships that maintain parent and child record access under private sharing models. 
+        - Too many child records associated with the same parent object in one of these relationships causes account data skew. 
+        - Record locking during updates
+        - Sharing issues
+    - Ownership Skew
+        - Assinging large volumes of records to one generic owner can cause performance issues due to sharing calculations required to manage visibility of those records
+        - When the skewed owner exists in the role hierarchy, operations like deletes or owner updates must remove sharing from the old owner and all parent users within the role hierarchy, and from all users given access by sharing rules. That’s why ownership changes tend to be one of the most costly transactional changes in the system.
+        - In some cases an ownership skew simply can’t be avoided. In these cases, it’s best to ensure the skewed owner doesn’t have a role. That way, you take the user and their records away from the role hierarchy and its associated sharing rules.
+    - Lookup Skew
+        - Lookup skew happens when a very large number of records are associated with a single record in the lookup object
+        - Every time a record is inserted or updated, Salesforce must lock the target records that are selected for each lookup field. This ensures that when the data is committed to the database, its integrity is maintained.
+        - Under normal circumstances, save operations execute so quickly that you don’t encounter locks. But when you add custom code and LDV simultaneously in an automated process, you might encounter lock exceptions that cause failures when you try to insert or update records.
+    - External Objects
+        - Another strategy for LDV is using external objects—which means there’s no need to bring data into Salesforce
+        - With a data-tiering strategy that spreads data across multiple objects and brings it in on demand from another object or external store, you avoid both storing large amounts of data in your org, and the performance issues associated with LDV.
+        - External objects are similar to custom objects, except they map to data that’s stored outside your Salesforce organization, enabling your users and the Force.com platform to search and interact with the external data.
+        - By accessing record data on demand, external objects always reflect the current state of the external data. 
+        - An external data source specifies how to access an external system. Salesforce Connect uses external data sources to access data that's stored outside your Salesforce organization. 
+        - Files Connect uses external data sources to access third-party content systems. 
+        - External data sources have associated external objects, which your users and the Force.com platform use to interact with the external data and content.
+    - External Object Lookups
+        - External objects support standard lookup relationships, which use the 18-character Salesforce record IDs to associate related records with each other. But data that’s stored outside your Salesforce org often doesn’t contain those record IDs.
+        - Two special types of lookup relationships are available for external objects: external lookups and indirect lookups.
+        - These external lookups and indirect lookups compare a specific field’s values on the parent object to the relationship field’s values on the child object. When values match, the records are related to each other.
+        - Use an external lookup relationship when the parent is an external object.
+        - An external lookup relationship links a child standard, custom, or external object to a parent external object. 
+        - The values of the standard External ID field on the parent external object are matched against the values of the external lookup relationship field
+        - For a child external object, the values of the external lookup relationship field come from the specified External Column Name.
+        - Use an indirect lookup relationship when the external data doesn’t include Salesforce record IDs
+        - An indirect lookup relationship links a child external object to a parent standard or custom object.
+        - When you create an indirect lookup relationship field on an external object, you specify the parent object field and the child object field to match against each other, selecting a custom unique external ID field on the parent object to match against the child’s indirect lookup relationship field, whose values are determined by the specified External Column Name.
+    - Conduct Data Queries and Searches
+        - For data to be searched, it must first be indexed. Force.com automatically indexes most text fields so your users can build cross-object searches and quickly find records that contain strings of interest.
+        - Indexed searches are performed by first searching the indexes for appropriate records, then narrowing down the results based on access permissions, search limits, and other filters.
+        - This creates a result set, which typically contains the most relevant results. After the result set reaches a predetermined size, the remaining records are discarded.
+        - The result set is then used to query the records from the database to retrieve the fields that a user sees. 
+        - And when large volumes of data are added or changed, this whole process could take a long time.
+        - Limitations of SOQL and SOSL queries:
+            - The limit for multiple SOSL searches in a single transaction is 20.
+            - If there is only a single SOSL search in a transaction, which is a common occurrence, SOSL can return a full 40,000 records. This is in addition to SOQL in the same transaction potentially returning its 50,000 records.
+            - If there is more than a single SOSL search in the transaction, the maximum records returned by EACH of the up to 20 separate SOSL searches is 2,000 (for example: 20 SOSL searches returning the max 2,000 records each max out the 40,000 record limit of the transaction).
+        - The Force.com query optimizer maintains a table of statistics about the distribution of data in each index. It uses this table to perform pre-queries to determine whether using the index can speed up the query. It works on the queries that are automatically generated to handle reports, list views, and both SOQL queries and the other queries that piggyback on them.
+        - In general, the best way to query and process large data sets in the Force.com platform is to do it asynchronously in batches. You can query and process up to 50 million records using Batch Apex.
+        - Another strategy to efficiently query large data sets is to use bulk queries. A bulk query can retrieve up to 15 GB of data, divided into fifteen 1 GB files. 
+        - Bulk API query supports both query and queryAll operations. The queryAll operation returns records that have been deleted because of a merge or delete. The queryAll operation also returns information about archived Task and Event records.
+        - When adding a batch to a bulk query job, the Content-Type in the header for the request must be either text/csv, application/xml, or application/json, depending on the content type specified when the job was created. The actual SOQL statement supplied for the batch is in plain text format.
+        - When a bulk query is processed, Salesforce attempts to execute the query. If the query doesn’t execute within the standard two-minute timeout limit, the job fails and a QUERY_TIMEOUT error is returned.
+        - If the query succeeds, Salesforce attempts to retrieve the results. If the results exceed the 1GB file size limit or take longer than 5 minutes to retrieve, the completed results are cached and another attempt is made. 
+        - After 30 attempts, the job fails and the error message Retried more than thirty times is returned. 
+        - If this happens, consider using the PK Chunking header to split the query results into smaller chunks (more on PK chunking in a subsequent unit). 
+        - If the attempts succeed, the results are returned and stored for seven days.
+    Using Skinny Tables
+        - A skinny table is a custom table in the Force.com platform that contains a subset of fields from a standard or custom base Salesforce object.
+        - By having narrower rows and less data to scan than the base Salesforce object, skinny tables allow Force.com to return more rows per database fetch, increasing throughput when reading from a large object,
+        - Also, skinny tables don’t include soft-deleted rows 
+        - Custom indexes on the base table are also replicated, and they usually perform better because of the reduced table joins that happen in the underlying database queries.
+        - The Force.com platform automatically synchronizes the rows between the base object and the skinny table, so the data is always kept current.
+        - The Force.com platform determines at query runtime when it would make sense to use skinny tables, so you don’t have to modify your reports or develop any Apex code or API calls.
+        - Skinny tables are most useful with tables containing millions of records. They can be created on custom objects, and on Account, Contact, Opportunity, Lead, and Case objects. And they can enhance performance for reports, list views, and SOQL.
+Loading Data
+    Loading Lean
+        - What does loading lean entail?
+            - Identifying the business-critical operations before moving users to Salesforce.
+            - Identifying the minimal data set and configuration required to implement those operations.
+            - Defining a data and configuration strategy based on the requirements you’ve identified.
+            - Loading the data as quickly as possible to reduce the scope of synchronization.
+        - Organization-wide sharing defaults. When you load data with a Private sharing model, the system calculates sharing as the records are being added. If you load with a Public Read/Write sharing model, you can defer this processing until after cutover.
+        - Complex object relationships. The more lookups you have defined on an object, the more checks the system has to perform during data loading. But if you’re able to establish some of these relationships in a later phase, that makes loading go faster.
+        - Sharing rules. If you have ownership-based sharing rules configured before loading data, each record you insert requires sharing calculations if the owner of the record belongs to a role or group that defines the data to be shared. If you have criteria-based sharing rules configured before loading data, each record with fields that match the rule selection criteria also requires sharing calculations.
+        - Workflow rules, validation rules, and triggers. These are powerful tools for making sure data entered during daily operations is clean and includes appropriate relationships between records. But they can also slow down processing if they’re enabled during massive data loads.
+    Bulk API
+        - Using Bulk API for LDV allows for super-fast processing speeds, along with reduced client-side programmatic language, easy-to-monitor job status, automatic retry of failed records, support for parallel processing, minimal roundout trips to Force.com, minimal API calls, limited dropped connections, and easy-to-tune batch size. Simply put, it’s the quickest way to insert, query, and delete records.
+        - When you upload records using Bulk API, those records are streamed to Force.com to create a new job. As the data rolls in for the job, it’s stored in temporary storage and then sliced up into user-defined batches (10,000 records max). Even as your data is still being sent to the server, the Force.com platform submits the batches for processing.
+        - Batches can be processed in parallel or serially depending on your needs. The Bulk API moves the functionality and work from your client application to the server. 
+        - The API logs the status of each job and tries to reprocess failed records for you automatically. 
+        - If a job times out, the Bulk API automatically puts it back in the queue and re-tries it for you.
+        - Each batch is processed independently, and once the batch finishes (successful or not), the job is updated with the results.
+    Increase Speed by Suspending Events
+        - With the right prep and post-processing, you can disable data validation and enrichment operations while loading —without compromising your data integrity or business rules.
+        - Analyzing and Preparing Data
+        - Temporarily disabling triggers is a little more complex and requires some preparation. First, create a Custom Setting and a corresponding checkbox field to control when a trigger should fire. Then include a statement in your trigger code
+        - When you’ve finished loading your data, it’s time to complete the data enrichment and configuration tasks you’ve deferred until this point:
+            - Add lookup relationships between objects, roll-up summary fields to parent records, and other data relationships between records using Batch Apex or Bulk API.
+            - Enhance records in Salesforce with foreign keys or other data to facilitate integration with your other systems using Batch Apex or Bulk API.
+            - Reset the fields on the custom settings you created for triggers, so they’ll fire appropriately on record creation and updates.
+            - Turn validation, workflow, and assignment rules back on so they’ll trigger the appropriate actions as users enter and edit records.
+Perform Data Deletes and Extracts
+    - Bulk API is useful when it comes to deleting or extracting LDV. When there’s a process that involves deleting one million or more records, the hard delete option of Bulk API can do the trick.
+    - When extracting data with Bulk API, queries are split into 100,000 record chunks by default—you can use the chunkSize header field to configure smaller chunks, or larger ones up to 250,000. 
+    - Larger chunk sizes use up fewer Bulk API batches, but may not perform as well. 
+    - At extremely high volumes—hundreds of millions of records—defining these chunks by filtering on field values may not be practical. The number of rows that are returned may be higher than the selectivity threshold of Salesforce’s query optimizer. The result could be a full table scan and slow performance, or even failure. 
+    - Use PK Chunking to handle extra-large data set extracts. PK stands for Primary Key—the object’s record ID—which is always indexed. 
+    - PK chunking splits bulk queries on very large tables into chunks based on the record IDs of the queried records.
+    - Enable PK chunking when querying tables with more than 10 million records or when a bulk query consistently times out.
+    - PK Chunking is a supported feature of the Salesforce Bulk API, so it does all the work of splitting the queries into manageable chunks
+    - Just enter a few parameters on your Bulk API job, and the platform automatically splits the query into separate chunks, executes a query for each chunk, and returns the data.
+    - To enable the feature, specify the header Sforce-Enable-PKChunking on the job request for your Bulk API query.
+    - Each chunk is processed as a separate batch that counts toward your daily batch limit, and its results must be downloaded separately.
+    - You can perform filtering while using PK Chunking by including a WHERE clause in the Bulk API query. Using this method, there may be fewer records returned for a chunk than the number you have specified in chunkSize.
+Truncation
+    - If you want to delete records in a sandbox org’s custom objects immediately, you can try truncating those custom objects.
+    - Truncating custom objects is a fast way to permanently remove all the records from a custom object, while keeping the object and its metadata intact for future use.
+    - Truncating a custom object erases all records currently sitting in the custom object’s Recycle Bin; the custom object’s history; and related events, tasks, notes, and attachments for each deleted record.
+    - Truncating is useful, for example, if you have created a custom object and filled it with test records. When you’re done with the test data, you can truncate the object to purge the test records, but keep the object and put it into production.
+    - Truncating a custom object permanently removes all of its records.
+    - A copy of the truncated object appears in the Deleted Objects list for 15 days—during this period the object and its records continue to count toward your organization’s limits—and then the copied object and its records are permanently deleted.
+    - You can’t truncate standard objects or custom objects that are referenced by another object through a lookup field, or that are on the master side of a master-detail relationship, are referenced in a reporting snapshot, have a custom index or an external ID, or have activated skinny tables.
+    - And you can’t truncate custom objects when your org has reached its limit on allowed custom objects.
+*/
